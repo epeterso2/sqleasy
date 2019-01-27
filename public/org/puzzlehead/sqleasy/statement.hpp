@@ -46,6 +46,30 @@ public:
 	Statement(const Database& database, const std::string& sql);
 
 	virtual ~Statement() = default;
+
+	explicit operator bool();
+
+	Database::Handle database() const;
+
+	Handle handle() const;
+
+	int step();
+
+	int reset();
+
+	int columnCount();
+
+	int dataCount();
+
+	bool busy();
+
+	bool readOnly();
+
+protected:
+
+	Database::Handle m_database = nullptr;
+
+	Handle m_handle = nullptr;
 };
 
 } /* namespace sqleasy */

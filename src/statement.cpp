@@ -31,15 +31,61 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-Statement::Statement()
+Statement::Statement(const Database& database, const std::string& sql) :
+		m_database(database.handle())
 {
-	// TODO Auto-generated constructor stub
+	sqlite3_stmt * stmt = nullptr;
 
+	if (m_database
+			!= nullptr&& sqlite3_prepare_v2(m_database.get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
+	{
+		m_handle.reset(stmt, sqlite3_finalize);
+	}
 }
 
-Statement::~Statement()
+Statement::operator bool()
 {
-	// TODO Auto-generated destructor stub
+	return m_handle != nullptr;
+}
+
+Database::Handle Statement::database() const
+{
+	return m_database;
+}
+
+Statement::Handle Statement::handle() const
+{
+	return m_handle;
+}
+
+int Statement::step()
+{
+	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_step(m_handle.get());
+}
+
+int Statement::reset()
+{
+	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_reset(m_handle.get());
+}
+
+int Statement::columnCount()
+{
+	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_column_count(m_handle.get());
+}
+
+int Statement::dataCount()
+{
+	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_data_count(m_handle.get());
+}
+
+bool Statement::busy()
+{
+	return m_handle != nullptr && sqlite3_stmt_busy(m_handle.get()) != 0;
+}
+
+bool Statement::readOnly()
+{
+	return m_handle != nullptr && sqlite3_stmt_readonly(m_handle.get()) != 0;
 }
 
 } /* namespace sqleasy */

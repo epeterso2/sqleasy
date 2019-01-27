@@ -55,7 +55,7 @@ public:
 
 	explicit operator bool();
 
-	Handle handle();
+	Handle handle() const;
 
 	int exec(const std::string& sql);
 

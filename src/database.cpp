@@ -63,7 +63,7 @@ Database::operator bool()
 	return m_handle != nullptr;
 }
 
-Database::Handle Database::handle()
+Database::Handle Database::handle() const
 {
 	return m_handle;
 }
