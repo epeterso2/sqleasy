@@ -22,11 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_
-#define ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_
-
-#include <memory>
-#include <string>
+#ifndef ORG_PUZZLEHEAD_SQLEASY_DATABASE_CONFIG_HPP_
+#define ORG_PUZZLEHEAD_SQLEASY_DATABASE_CONFIG_HPP_
 
 #include <org/puzzlehead/sqleasy/database.hpp>
 
@@ -37,37 +34,63 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-class Statement
+class DatabaseConfig
 {
 public:
 
-	using Handle = std::shared_ptr<sqlite3_stmt>;
+	class Option {
+	public:
 
-	Statement(const Database& database, const std::string& sql);
+		Option(const Database& database, const int option);
 
-	virtual ~Statement() = default;
+		virtual ~Option() = default;
 
-	explicit operator bool();
+		explicit operator bool();
 
-	Handle handle() const;
+		int setEnabled(const bool enabled);
 
-	int step();
+		int enable();
 
-	int reset();
+		int disable();
 
-	bool busy();
+		int enabled(bool& enabled);
 
-	bool readOnly();
+	protected:
+
+		static constexpr int INVALID_OPTION = -1;
+
+		Database m_database;
+
+		int m_option;
+	};
+
+	explicit DatabaseConfig(const Database& database);
+
+	virtual ~DatabaseConfig() = default;
+
+	Option foreignKeysOption();
+
+	Option triggersOption();
+
+	Option fts3TokenizerOption();
+
+	Option loadExtensionOption();
+
+	Option noCheckpointOnCloseOption();
 
 protected:
 
-	Database m_database;
+	static constexpr int ENABLED = 1;
 
-	Handle m_handle = nullptr;
+	static constexpr int DISABLED = 0;
+
+	static constexpr int UNCHANGED = -1;
+
+	Database m_database;
 };
 
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
 } /* namespace org */
 
-#endif /* ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_ */
+#endif /* ORG_PUZZLEHEAD_SQLEASY_DATABASE_CONFIG_HPP_ */

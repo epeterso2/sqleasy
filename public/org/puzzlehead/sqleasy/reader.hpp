@@ -22,13 +22,10 @@
  * SOFTWARE.
  */
 
-#ifndef ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_
-#define ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_
+#ifndef ORG_PUZZLEHEAD_SQLEASY_READER_HPP_
+#define ORG_PUZZLEHEAD_SQLEASY_READER_HPP_
 
-#include <memory>
-#include <string>
-
-#include <org/puzzlehead/sqleasy/database.hpp>
+#include <org/puzzlehead/sqleasy/statement.hpp>
 
 namespace org
 {
@@ -37,37 +34,27 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-class Statement
+class Reader
 {
 public:
 
-	using Handle = std::shared_ptr<sqlite3_stmt>;
+	explicit Reader(const Statement& statement);
 
-	Statement(const Database& database, const std::string& sql);
-
-	virtual ~Statement() = default;
+	virtual ~Reader() = default;
 
 	explicit operator bool();
 
-	Handle handle() const;
+	int columnCount();
 
-	int step();
-
-	int reset();
-
-	bool busy();
-
-	bool readOnly();
+	int dataCount();
 
 protected:
 
-	Database m_database;
-
-	Handle m_handle = nullptr;
+	Statement m_statement;
 };
 
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
 } /* namespace org */
 
-#endif /* ORG_PUZZLEHEAD_SQLEASY_STATEMENT_HPP_ */
+#endif /* ORG_PUZZLEHEAD_SQLEASY_READER_HPP_ */

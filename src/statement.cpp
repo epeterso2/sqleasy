@@ -32,12 +32,12 @@ namespace sqleasy
 {
 
 Statement::Statement(const Database& database, const std::string& sql) :
-		m_database(database.handle())
+		m_database(database)
 {
 	sqlite3_stmt * stmt = nullptr;
 
-	if (m_database
-			!= nullptr&& sqlite3_prepare_v2(m_database.get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
+	if (bool(
+			m_database) && sqlite3_prepare_v2(m_database.handle().get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
 	{
 		m_handle.reset(stmt, sqlite3_finalize);
 	}
@@ -46,11 +46,6 @@ Statement::Statement(const Database& database, const std::string& sql) :
 Statement::operator bool()
 {
 	return m_handle != nullptr;
-}
-
-Database::Handle Statement::database() const
-{
-	return m_database;
 }
 
 Statement::Handle Statement::handle() const
@@ -66,16 +61,6 @@ int Statement::step()
 int Statement::reset()
 {
 	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_reset(m_handle.get());
-}
-
-int Statement::columnCount()
-{
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_column_count(m_handle.get());
-}
-
-int Statement::dataCount()
-{
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_data_count(m_handle.get());
 }
 
 bool Statement::busy()
