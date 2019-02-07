@@ -32,35 +32,66 @@ namespace sqleasy
 {
 
 Database::Database(const std::string& filename) :
-		Database(filename, DEFAULT_FLAGS, DEFAULT_VFS)
+		Database(nullptr, filename, DEFAULT_FLAGS, DEFAULT_VFS)
 {
 }
 
 Database::Database(const std::string& filename, const int flags) :
-		Database(filename, flags, DEFAULT_VFS)
+		Database(nullptr, filename, flags, DEFAULT_VFS)
 {
 }
 
 Database::Database(const std::string& filename, const std::string& vfs) :
-		Database(filename, DEFAULT_FLAGS, vfs)
+		Database(nullptr, filename, DEFAULT_FLAGS, vfs)
 {
 }
 
 Database::Database(const std::string& filename, const int flags,
-		const std::string& vfs)
+		const std::string& vfs) :
+		Database(nullptr, filename, flags, vfs)
 {
+}
+
+Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename) :
+		Database(api, filename, DEFAULT_FLAGS, DEFAULT_VFS)
+{
+}
+
+Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags) :
+		Database(api, filename, flags, DEFAULT_VFS)
+{
+}
+
+Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const std::string& vfs) :
+		Database(api, filename, DEFAULT_FLAGS, vfs)
+{
+}
+
+Database::Database(const Sqlite3Api::SharedPtr& api,
+		const std::string& filename, const int flags, const std::string& vfs)
+{
+	m_api = ((api == nullptr) ? std::make_shared<Sqlite3Api>() : api);
+
 	sqlite3 * db = nullptr;
 
-	if (sqlite3_open_v2(filename.c_str(), &db, flags,
+	if (m_api->openV2(filename.c_str(), &db, flags,
 			vfs == "" ? nullptr : vfs.c_str()) == SQLITE_OK)
 	{
-		m_object.reset(db, sqlite3_close_v2);
+		m_object.reset(db, [this](sqlite3 * db)
+		{
+			m_api->closeV2(db);
+		});
 	}
 }
 
 Database::operator bool()
 {
 	return bool(m_object);
+}
+
+Sqlite3Api::SharedPtr Database::api() const
+{
+	return m_api;
 }
 
 Sqlite3DatabasePtr Database::object() const
@@ -70,22 +101,25 @@ Sqlite3DatabasePtr Database::object() const
 
 int Database::exec(const std::string& sql)
 {
-	return *this ? sqlite3_exec(m_object.get(), sql.c_str(), nullptr, nullptr, nullptr) : SQLITE_MISUSE;
+	return *this ?
+			m_api->exec(m_object.get(), sql.c_str(), nullptr, nullptr,
+					nullptr) :
+			SQLITE_MISUSE;
 }
 
 int Database::errorCode()
 {
-	return *this ? sqlite3_errcode(m_object.get()) : SQLITE_MISUSE;
+	return *this ? m_api->errcode(m_object.get()) : SQLITE_MISUSE;
 }
 
 int Database::extendedErrorCode()
 {
-	return *this ? sqlite3_errcode(m_object.get()) : SQLITE_MISUSE;
+	return *this ? m_api->extendedErrcode(m_object.get()) : SQLITE_MISUSE;
 }
 
 std::string Database::errorMessage()
 {
-	return *this ? sqlite3_errmsg(m_object.get()) : "";
+	return *this ? m_api->errmsg(m_object.get()) : "";
 }
 
 }

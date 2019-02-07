@@ -26,6 +26,7 @@
 #define ORG_PUZZLEHEAD_SQLEASY_READER_HPP_
 
 #include <org/puzzlehead/sqleasy/statement.hpp>
+#include <org/puzzlehead/sqleasy/types.hpp>
 
 namespace org
 {
@@ -50,7 +51,9 @@ public:
 
 protected:
 
-	Statement m_statement;
+	Sqlite3Api::SharedPtr m_api = nullptr;
+
+	Sqlite3StatementPtr m_statement = nullptr;
 };
 
 } /* namespace sqleasy */

@@ -94,7 +94,9 @@ protected:
 
 	static constexpr int INVALID_INDEX = 0;
 
-	Statement m_statement;
+	Sqlite3Api::SharedPtr m_api = nullptr;
+
+	Sqlite3StatementPtr m_statement = nullptr;
 };
 
 } /* namespace sqleasy */

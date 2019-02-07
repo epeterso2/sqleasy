@@ -32,7 +32,7 @@ namespace sqleasy
 {
 
 Reader::Reader(const Statement& statement) :
-		m_statement(statement)
+		m_api(statement.database().api()), m_statement(statement.object())
 {
 }
 
@@ -43,12 +43,12 @@ Reader::operator bool()
 
 int Reader::columnCount()
 {
-	return *this ? sqlite3_column_count(m_statement.object().get()) : 0;
+	return *this ? m_api->columnCount(m_statement.get()) : 0;
 }
 
 int Reader::dataCount()
 {
-	return *this ? sqlite3_data_count(m_statement.object().get()) : 0;
+	return *this ? m_api->dataCount(m_statement.get()) : 0;
 }
 
 } /* namespace sqleasy */

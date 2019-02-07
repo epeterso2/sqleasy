@@ -36,8 +36,9 @@ Statement::Statement(const Database& database, const std::string& sql) :
 {
 	sqlite3_stmt * stmt = nullptr;
 
-	if (bool(
-			m_database) && sqlite3_prepare_v2(m_database.object().get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
+	if (m_database
+			&& m_database.api()->prepareV2(m_database.object().get(),
+					sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
 	{
 		m_object.reset(stmt, sqlite3_finalize);
 	}
@@ -60,22 +61,22 @@ Sqlite3StatementPtr Statement::object() const
 
 int Statement::step()
 {
-	return *this ? sqlite3_step(m_object.get()) : SQLITE_MISUSE;
+	return *this ? m_database.api()->step(m_object.get()) : SQLITE_MISUSE;
 }
 
 int Statement::reset()
 {
-	return *this ? sqlite3_reset(m_object.get()) : SQLITE_MISUSE;
+	return *this ? m_database.api()->reset(m_object.get()) : SQLITE_MISUSE;
 }
 
 bool Statement::busy()
 {
-	return *this && (sqlite3_stmt_busy(m_object.get()) != 0);
+	return *this && (m_database.api()->stmtBusy(m_object.get()) != 0);
 }
 
 bool Statement::readOnly()
 {
-	return *this && (sqlite3_stmt_readonly(m_object.get()) != 0);
+	return *this && (m_database.api()->stmtReadonly(m_object.get()) != 0);
 }
 
 } /* namespace sqleasy */

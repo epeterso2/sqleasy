@@ -30,6 +30,7 @@
 
 #include <sqlite3.h>
 
+#include <org/puzzlehead/sqleasy/sqlite3_api.hpp>
 #include <org/puzzlehead/sqleasy/types.hpp>
 
 namespace org
@@ -51,9 +52,19 @@ public:
 
 	Database(const std::string& filename, const int flags, const std::string& vfs);
 
+	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename);
+
+	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags);
+
+	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const std::string& vfs);
+
+	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags, const std::string& vfs);
+
 	virtual ~Database() = default;
 
 	explicit operator bool();
+
+	Sqlite3Api::SharedPtr api() const;
 
 	Sqlite3DatabasePtr object() const;
 
@@ -70,6 +81,8 @@ protected:
 	static constexpr int DEFAULT_FLAGS = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
 
 	static constexpr auto DEFAULT_VFS = "";
+
+	Sqlite3Api::SharedPtr m_api = nullptr;
 
 	Sqlite3DatabasePtr m_object = nullptr;
 };

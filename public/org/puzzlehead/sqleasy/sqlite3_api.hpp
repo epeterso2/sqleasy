@@ -25,6 +25,8 @@
 #ifndef ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
 #define ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
 
+#include <memory>
+
 #include <sqlite3.h>
 
 namespace org
@@ -37,6 +39,8 @@ namespace sqleasy
 class Sqlite3Api
 {
 public:
+
+	using SharedPtr = std::shared_ptr<Sqlite3Api>;
 
 	Sqlite3Api() = default;
 
@@ -69,9 +73,9 @@ public:
 			sqlite3_int64 size, void (*deleter)(void *),
 			unsigned char encoding);
 
-	virtual int bindZeroBlob(sqlite3_stmt * stmt, int index, int size);
+	virtual int bindZeroblob(sqlite3_stmt * stmt, int index, int size);
 
-	virtual int bindZeroBlob64(sqlite3_stmt * stmt, int index,
+	virtual int bindZeroblob64(sqlite3_stmt * stmt, int index,
 			sqlite3_int64 size);
 
 	virtual int clearBindings(sqlite3_stmt * stmt);
@@ -124,13 +128,15 @@ public:
 			const char * zVfs);
 
 	virtual int prepareV2(sqlite3 * db, const char * sql, int nByte,
-			sqlite3_stmt * stmt, const char ** tail);
+			sqlite3_stmt ** stmt, const char ** tail);
 
 	virtual int reset(sqlite3_stmt * stmt);
 
 	virtual int step(sqlite3_stmt * stmt);
 
 	virtual int stmtBusy(sqlite3_stmt * stmt);
+
+	virtual int stmtReadonly(sqlite3_stmt * stmt);
 };
 
 } /* namespace sqleasy */
