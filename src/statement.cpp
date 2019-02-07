@@ -45,7 +45,7 @@ Statement::Statement(const Database& database, const std::string& sql) :
 
 Statement::operator bool()
 {
-	return m_object != nullptr;
+	return bool(m_object);
 }
 
 Database Statement::database() const
@@ -60,22 +60,22 @@ Sqlite3StatementPtr Statement::object() const
 
 int Statement::step()
 {
-	return m_object == nullptr ? SQLITE_MISUSE : sqlite3_step(m_object.get());
+	return *this ? sqlite3_step(m_object.get()) : SQLITE_MISUSE;
 }
 
 int Statement::reset()
 {
-	return m_object == nullptr ? SQLITE_MISUSE : sqlite3_reset(m_object.get());
+	return *this ? sqlite3_reset(m_object.get()) : SQLITE_MISUSE;
 }
 
 bool Statement::busy()
 {
-	return m_object != nullptr && sqlite3_stmt_busy(m_object.get()) != 0;
+	return *this && (sqlite3_stmt_busy(m_object.get()) != 0);
 }
 
 bool Statement::readOnly()
 {
-	return m_object != nullptr && sqlite3_stmt_readonly(m_object.get()) != 0;
+	return *this && (sqlite3_stmt_readonly(m_object.get()) != 0);
 }
 
 } /* namespace sqleasy */

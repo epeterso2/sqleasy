@@ -43,12 +43,12 @@ Reader::operator bool()
 
 int Reader::columnCount()
 {
-	return bool(m_statement) ? sqlite3_column_count(m_statement.object().get()) : 0;
+	return *this ? sqlite3_column_count(m_statement.object().get()) : 0;
 }
 
 int Reader::dataCount()
 {
-	return bool(m_statement) ? sqlite3_data_count(m_statement.object().get()) : 0;
+	return *this ? sqlite3_data_count(m_statement.object().get()) : 0;
 }
 
 } /* namespace sqleasy */

@@ -43,19 +43,18 @@ Binder::operator bool()
 
 int Binder::clear()
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_clear_bindings(m_statement.object().get()) : SQLITE_MISUSE;
 }
 
 int Binder::count()
 {
-	return bool(m_statement) ?
-			sqlite3_bind_parameter_count(m_statement.object().get()) : 0;
+	return *this ? sqlite3_bind_parameter_count(m_statement.object().get()) : 0;
 }
 
 int Binder::index(const std::string& name)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_parameter_index(m_statement.object().get(),
 					name.c_str()) :
 			INVALID_INDEX;
@@ -63,13 +62,13 @@ int Binder::index(const std::string& name)
 
 std::string Binder::name(const int index)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_parameter_name(m_statement.object().get(), index) : "";
 }
 
 int Binder::bindBlob(const int index, const void * value, const int size)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_blob(m_statement.object().get(), index, value, size,
 					nullptr) :
 			SQLITE_MISUSE;
@@ -83,7 +82,7 @@ int Binder::bindBlob(const std::string& name, const void * value,
 
 int Binder::bindBlob64(const int index, const void * value, const int64_t size)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_blob64(m_statement.object().get(), index, value, size,
 					nullptr) :
 			SQLITE_MISUSE;
@@ -97,7 +96,7 @@ int Binder::bindBlob64(const std::string& name, const void * value,
 
 int Binder::bindDouble(const int index, const double value)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_double(m_statement.object().get(), index, value) :
 			SQLITE_MISUSE;
 }
@@ -109,9 +108,8 @@ int Binder::bindDouble(const std::string& name, const double value)
 
 int Binder::bindInt(const int index, const int value)
 {
-	return bool(m_statement) ?
-			sqlite3_bind_int(m_statement.object().get(), index, value) :
-			SQLITE_MISUSE;
+	return *this ? sqlite3_bind_int(m_statement.object().get(), index, value) :
+	SQLITE_MISUSE;
 }
 
 int Binder::bindInt(const std::string& name, const int value)
@@ -121,7 +119,7 @@ int Binder::bindInt(const std::string& name, const int value)
 
 int Binder::bindInt64(const int index, const int64_t value)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_int64(m_statement.object().get(), index, value) :
 			SQLITE_MISUSE;
 }
@@ -133,7 +131,7 @@ int Binder::bindInt64(const std::string& name, const int64_t value)
 
 int Binder::bindNull(const int index)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_null(m_statement.object().get(), index) : SQLITE_MISUSE;
 }
 
@@ -144,7 +142,7 @@ int Binder::bindNull(const std::string& name)
 
 int Binder::bindText(const int index, const std::string& value)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_text(m_statement.object().get(), index, value.c_str(),
 					value.length(), nullptr) :
 			SQLITE_MISUSE;
@@ -157,7 +155,7 @@ int Binder::bindText(const std::string& name, const std::string& value)
 
 int Binder::bindZeroBlob(const int index, const int size)
 {
-	return bool(m_statement) ?
+	return *this ?
 			sqlite3_bind_zeroblob(m_statement.object().get(), index, size) :
 			SQLITE_MISUSE;
 }
