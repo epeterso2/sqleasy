@@ -44,7 +44,7 @@ DatabaseConfig::Option::operator bool()
 int DatabaseConfig::Option::setEnabled(const bool enabled)
 {
 	return bool(m_database) ?
-			sqlite3_db_config(m_database.handle().get(), m_option,
+			sqlite3_db_config(m_database.object().get(), m_option,
 					enabled ? ENABLED : DISABLED, nullptr) :
 			SQLITE_MISUSE;
 }
@@ -66,7 +66,7 @@ int DatabaseConfig::Option::enabled(bool& enabled)
 	if (bool(m_database))
 	{
 		enabled = false;
-		result = sqlite3_db_config(m_database.handle().get(), m_option, UNCHANGED, &enabled);
+		result = sqlite3_db_config(m_database.object().get(), m_option, UNCHANGED, &enabled);
 	}
 
 	return result;

@@ -37,40 +37,45 @@ Statement::Statement(const Database& database, const std::string& sql) :
 	sqlite3_stmt * stmt = nullptr;
 
 	if (bool(
-			m_database) && sqlite3_prepare_v2(m_database.handle().get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
+			m_database) && sqlite3_prepare_v2(m_database.object().get(), sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
 	{
-		m_handle.reset(stmt, sqlite3_finalize);
+		m_object.reset(stmt, sqlite3_finalize);
 	}
 }
 
 Statement::operator bool()
 {
-	return m_handle != nullptr;
+	return m_object != nullptr;
 }
 
-Statement::Handle Statement::handle() const
+Database Statement::database() const
 {
-	return m_handle;
+	return m_database;
+}
+
+Sqlite3StatementPtr Statement::object() const
+{
+	return m_object;
 }
 
 int Statement::step()
 {
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_step(m_handle.get());
+	return m_object == nullptr ? SQLITE_MISUSE : sqlite3_step(m_object.get());
 }
 
 int Statement::reset()
 {
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_reset(m_handle.get());
+	return m_object == nullptr ? SQLITE_MISUSE : sqlite3_reset(m_object.get());
 }
 
 bool Statement::busy()
 {
-	return m_handle != nullptr && sqlite3_stmt_busy(m_handle.get()) != 0;
+	return m_object != nullptr && sqlite3_stmt_busy(m_object.get()) != 0;
 }
 
 bool Statement::readOnly()
 {
-	return m_handle != nullptr && sqlite3_stmt_readonly(m_handle.get()) != 0;
+	return m_object != nullptr && sqlite3_stmt_readonly(m_object.get()) != 0;
 }
 
 } /* namespace sqleasy */

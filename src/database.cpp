@@ -54,43 +54,38 @@ Database::Database(const std::string& filename, const int flags,
 	if (sqlite3_open_v2(filename.c_str(), &db, flags,
 			vfs == "" ? nullptr : vfs.c_str()) == SQLITE_OK)
 	{
-		m_handle.reset(db, sqlite3_close_v2);
+		m_object.reset(db, sqlite3_close_v2);
 	}
 }
 
 Database::operator bool()
 {
-	return m_handle != nullptr;
+	return bool(m_object);
 }
 
-Database::Handle Database::handle() const
+Sqlite3DatabasePtr Database::object() const
 {
-	return m_handle;
+	return m_object;
 }
 
 int Database::exec(const std::string& sql)
 {
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_exec(m_handle.get(), sql.c_str(), nullptr, nullptr, nullptr);
+	return *this ? sqlite3_exec(m_object.get(), sql.c_str(), nullptr, nullptr, nullptr) : SQLITE_MISUSE;
 }
 
 int Database::errorCode()
 {
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_errcode(m_handle.get());
+	return *this ? sqlite3_errcode(m_object.get()) : SQLITE_MISUSE;
 }
 
 int Database::extendedErrorCode()
 {
-	return m_handle == nullptr ? SQLITE_MISUSE : sqlite3_errcode(m_handle.get());
+	return *this ? sqlite3_errcode(m_object.get()) : SQLITE_MISUSE;
 }
 
 std::string Database::errorMessage()
 {
-	return m_handle == nullptr ? "" : sqlite3_errmsg(m_handle.get());
-}
-
-std::string Database::errorString(const int errorCode)
-{
-	return sqlite3_errstr(errorCode);
+	return *this ? sqlite3_errmsg(m_object.get()) : "";
 }
 
 }

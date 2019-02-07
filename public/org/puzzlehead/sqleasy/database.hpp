@@ -30,6 +30,8 @@
 
 #include <sqlite3.h>
 
+#include <org/puzzlehead/sqleasy/types.hpp>
+
 namespace org
 {
 namespace puzzlehead
@@ -40,8 +42,6 @@ namespace sqleasy
 class Database
 {
 public:
-
-	using Handle = std::shared_ptr<sqlite3>;
 
 	explicit Database(const std::string& filename);
 
@@ -55,7 +55,7 @@ public:
 
 	explicit operator bool();
 
-	Handle handle() const;
+	Sqlite3DatabasePtr object() const;
 
 	int exec(const std::string& sql);
 
@@ -65,15 +65,13 @@ public:
 
 	std::string errorMessage();
 
-	static std::string errorString(const int errorCode);
-
 protected:
 
 	static constexpr int DEFAULT_FLAGS = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
 
 	static constexpr auto DEFAULT_VFS = "";
 
-	Handle m_handle = nullptr;
+	Sqlite3DatabasePtr m_object = nullptr;
 };
 
 } /* namespace sqleasy */

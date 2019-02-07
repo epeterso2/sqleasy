@@ -29,6 +29,7 @@
 #include <string>
 
 #include <org/puzzlehead/sqleasy/database.hpp>
+#include <org/puzzlehead/sqleasy/types.hpp>
 
 namespace org
 {
@@ -41,15 +42,15 @@ class Statement
 {
 public:
 
-	using Handle = std::shared_ptr<sqlite3_stmt>;
-
 	Statement(const Database& database, const std::string& sql);
 
 	virtual ~Statement() = default;
 
 	explicit operator bool();
 
-	Handle handle() const;
+	Database database() const;
+
+	Sqlite3StatementPtr object() const;
 
 	int step();
 
@@ -63,7 +64,7 @@ protected:
 
 	Database m_database;
 
-	Handle m_handle = nullptr;
+	Sqlite3StatementPtr m_object = nullptr;
 };
 
 } /* namespace sqleasy */
