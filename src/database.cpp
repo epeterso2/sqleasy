@@ -52,17 +52,20 @@ Database::Database(const std::string& filename, const int flags,
 {
 }
 
-Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename) :
+Database::Database(const Sqlite3Api::SharedPtr& api,
+		const std::string& filename) :
 		Database(api, filename, DEFAULT_FLAGS, DEFAULT_VFS)
 {
 }
 
-Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags) :
+Database::Database(const Sqlite3Api::SharedPtr& api,
+		const std::string& filename, const int flags) :
 		Database(api, filename, flags, DEFAULT_VFS)
 {
 }
 
-Database::Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const std::string& vfs) :
+Database::Database(const Sqlite3Api::SharedPtr& api,
+		const std::string& filename, const std::string& vfs) :
 		Database(api, filename, DEFAULT_FLAGS, vfs)
 {
 }

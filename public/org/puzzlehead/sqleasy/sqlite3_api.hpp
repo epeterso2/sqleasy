@@ -137,6 +137,10 @@ public:
 	virtual int stmtBusy(sqlite3_stmt * stmt);
 
 	virtual int stmtReadonly(sqlite3_stmt * stmt);
+
+	virtual char * strFinish(sqlite3_str * str);
+
+	virtual sqlite3_str * strNew(sqlite3 * db);
 };
 
 } /* namespace sqleasy */

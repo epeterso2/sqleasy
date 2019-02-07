@@ -96,7 +96,8 @@ int Sqlite3Api::bindZeroblob(sqlite3_stmt * stmt, int index, int size)
 	return sqlite3_bind_zeroblob(stmt, index, size);
 }
 
-int Sqlite3Api::bindZeroblob64(sqlite3_stmt * stmt, int index, sqlite3_int64 size)
+int Sqlite3Api::bindZeroblob64(sqlite3_stmt * stmt, int index,
+		sqlite3_int64 size)
 {
 	return sqlite3_bind_zeroblob64(stmt, index, size);
 }
@@ -208,7 +209,7 @@ int Sqlite3Api::openV2(const char * filename, sqlite3 ** db, int flags,
 }
 
 int Sqlite3Api::prepareV2(sqlite3 * db, const char * sql, int nByte,
-			sqlite3_stmt ** stmt, const char ** tail)
+		sqlite3_stmt ** stmt, const char ** tail)
 {
 	return sqlite3_prepare_v2(db, sql, nByte, stmt, tail);
 }
@@ -221,6 +222,11 @@ int Sqlite3Api::stmtBusy(sqlite3_stmt * stmt)
 int Sqlite3Api::stmtReadonly(sqlite3_stmt * stmt)
 {
 	return sqlite3_stmt_readonly(stmt);
+}
+
+sqlite3_str * Sqlite3Api::strNew(sqlite3 * db)
+{
+	return sqlite3_str_new(db);
 }
 
 } /* namespace sqleasy */

@@ -36,13 +36,9 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-using Sqlite3BlobPtr = std::shared_ptr<sqlite3_blob>;
-
 using Sqlite3DatabasePtr = std::shared_ptr<sqlite3>;
 
 using Sqlite3StatementPtr = std::shared_ptr<sqlite3_stmt>;
-
-using Sqlite3StrPtr = std::shared_ptr<sqlite3_str>;
 
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
