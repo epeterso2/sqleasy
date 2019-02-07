@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef ORG_PUZZLEHEAD_SQLEASY_SQLITE3_HPP_
-#define ORG_PUZZLEHEAD_SQLEASY_SQLITE3_HPP_
+#ifndef ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
+#define ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
 
 #include <sqlite3.h>
 
@@ -34,13 +34,13 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-class Sqlite3
+class Sqlite3Api
 {
 public:
 
-	Sqlite3() = default;
+	Sqlite3Api() = default;
 
-	virtual ~Sqlite3() = default;
+	virtual ~Sqlite3Api() = default;
 
 	virtual int bindBlob(sqlite3_stmt * stmt, int index, const void * value,
 			int size, void (*deleter)(void *));
@@ -137,4 +137,4 @@ public:
 } /* namespace puzzlehead */
 } /* namespace org */
 
-#endif /* ORG_PUZZLEHEAD_SQLEASY_SQLITE3_HPP_ */
+#endif /* ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_ */
