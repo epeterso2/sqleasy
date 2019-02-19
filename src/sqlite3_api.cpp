@@ -22,6 +22,8 @@
  * SOFTWARE.
  */
 
+#include <memory>
+
 #include <org/puzzlehead/sqleasy/sqlite3_api.hpp>
 
 namespace org
@@ -30,6 +32,11 @@ namespace puzzlehead
 {
 namespace sqleasy
 {
+
+Sqlite3Api::SharedPtr Sqlite3Api::create() {
+
+	return std::make_shared<Sqlite3Api>();
+}
 
 int Sqlite3Api::bindBlob(sqlite3_stmt * stmt, int index, const void * value,
 		int size, void (*deleter)(void *))
@@ -152,6 +159,16 @@ int Sqlite3Api::columnType(sqlite3_stmt * stmt, int index)
 	return sqlite3_column_type(stmt, index);
 }
 
+int Sqlite3Api::config(int option)
+{
+	return sqlite3_config(option);
+}
+
+int Sqlite3Api::config(int option, LoggerFunction func, void * object)
+{
+	return sqlite3_config(option, func, object);
+}
+
 int Sqlite3Api::dataCount(sqlite3_stmt * stmt)
 {
 	return sqlite3_data_count(stmt);
@@ -202,6 +219,11 @@ int Sqlite3Api::finalize(sqlite3_stmt * stmt)
 	return sqlite3_finalize(stmt);
 }
 
+int Sqlite3Api::initialize()
+{
+	return sqlite3_initialize();
+}
+
 int Sqlite3Api::openV2(const char * filename, sqlite3 ** db, int flags,
 		const char * zVfs)
 {
@@ -212,6 +234,11 @@ int Sqlite3Api::prepareV2(sqlite3 * db, const char * sql, int nByte,
 		sqlite3_stmt ** stmt, const char ** tail)
 {
 	return sqlite3_prepare_v2(db, sql, nByte, stmt, tail);
+}
+
+int Sqlite3Api::shutdown()
+{
+	return sqlite3_shutdown();
 }
 
 int Sqlite3Api::stmtBusy(sqlite3_stmt * stmt)

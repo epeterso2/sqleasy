@@ -25,9 +25,12 @@
 #ifndef ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
 #define ORG_PUZZLEHEAD_SQLEASY_SQLITE3_API_HPP_
 
+#include <functional>
 #include <memory>
 
 #include <sqlite3.h>
+
+#include <org/puzzlehead/sqleasy/types.hpp>
 
 namespace org
 {
@@ -45,6 +48,8 @@ public:
 	Sqlite3Api() = default;
 
 	virtual ~Sqlite3Api() = default;
+
+	static SharedPtr create();
 
 	virtual int bindBlob(sqlite3_stmt * stmt, int index, const void * value,
 			int size, void (*deleter)(void *));
@@ -98,6 +103,10 @@ public:
 
 	virtual const unsigned char * columnText(sqlite3_stmt * stmt, int index);
 
+	virtual int config(int option);
+
+	virtual int config(int option, std::function<void(void * object, int code, const char * status)> func, void * object);
+
 	virtual int columnType(sqlite3_stmt * stmt, int);
 
 	virtual int dataCount(sqlite3_stmt * stmt);
@@ -124,6 +133,8 @@ public:
 
 	virtual int finalize(sqlite3_stmt * stmt);
 
+	virtual int initialize();
+
 	virtual int openV2(const char * filename, sqlite3 ** db, int flags,
 			const char * zVfs);
 
@@ -131,6 +142,8 @@ public:
 			sqlite3_stmt ** stmt, const char ** tail);
 
 	virtual int reset(sqlite3_stmt * stmt);
+
+	virtual int shutdown();
 
 	virtual int step(sqlite3_stmt * stmt);
 

@@ -40,6 +40,10 @@ using Sqlite3DatabasePtr = std::shared_ptr<sqlite3>;
 
 using Sqlite3StatementPtr = std::shared_ptr<sqlite3_stmt>;
 
+using LoggerFunction = std::function<void(void * object, int code, const char * message)>;
+
+using LoggerCallback = std::function<void(const int code, const std::string& message)>;
+
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
 } /* namespace org */

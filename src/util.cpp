@@ -22,17 +22,7 @@
  * SOFTWARE.
  */
 
-#ifndef ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_
-#define ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_
-
-#include <memory>
-#include <string>
-
-#include <sqlite3.h>
-
-#include <org/puzzlehead/sqleasy/global_config.hpp>
-#include <org/puzzlehead/sqleasy/sqlite3_api.hpp>
-#include <org/puzzlehead/sqleasy/types.hpp>
+#include <org/puzzlehead/sqleasy/util.hpp>
 
 namespace org
 {
@@ -41,45 +31,19 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-class Database
+Util::Util(): Util(Sqlite3Api::create())
 {
-public:
+}
 
-	explicit Database(const std::string& filename);
+Util::Util(const Sqlite3Api::SharedPtr& api): m_api(api)
+{
+}
 
-	Database(const std::string& filename, const int flags);
+std::string Util::errorString(const int errorCode) {
 
-	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename);
-
-	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags);
-
-	virtual ~Database() = default;
-
-	explicit operator bool();
-
-	Sqlite3Api::SharedPtr api() const;
-
-	Sqlite3DatabasePtr object() const;
-
-	int exec(const std::string& sql);
-
-	int errorCode();
-
-	int extendedErrorCode();
-
-	std::string errorMessage();
-
-protected:
-
-	static constexpr int DEFAULT_FLAGS = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
-
-	Sqlite3Api::SharedPtr m_api = nullptr;
-
-	Sqlite3DatabasePtr m_object = nullptr;
-};
+	return m_api ? m_api->errstr(errorCode) : "";
+}
 
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
 } /* namespace org */
-
-#endif /* ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_ */

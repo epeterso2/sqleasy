@@ -22,15 +22,12 @@
  * SOFTWARE.
  */
 
-#ifndef ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_
-#define ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_
+#ifndef ORG_PUZZLEHEAD_SQLEASY_GLOBAL_CONFIG_HPP_
+#define ORG_PUZZLEHEAD_SQLEASY_GLOBAL_CONFIG_HPP_
 
-#include <memory>
-#include <string>
+#include <functional>
+#include <mutex>
 
-#include <sqlite3.h>
-
-#include <org/puzzlehead/sqleasy/global_config.hpp>
 #include <org/puzzlehead/sqleasy/sqlite3_api.hpp>
 #include <org/puzzlehead/sqleasy/types.hpp>
 
@@ -41,45 +38,47 @@ namespace puzzlehead
 namespace sqleasy
 {
 
-class Database
+class GlobalConfig
 {
 public:
 
-	explicit Database(const std::string& filename);
+	enum class ThreadingMode: int {
+		SingleThread = 0,
+		MultiThread = 1,
+		Serialized = 2
+	};
 
-	Database(const std::string& filename, const int flags);
+	GlobalConfig();
 
-	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename);
+	explicit GlobalConfig(const Sqlite3Api::SharedPtr& api);
 
-	Database(const Sqlite3Api::SharedPtr& api, const std::string& filename, const int flags);
-
-	virtual ~Database() = default;
-
-	explicit operator bool();
+	virtual ~GlobalConfig();
 
 	Sqlite3Api::SharedPtr api() const;
 
-	Sqlite3DatabasePtr object() const;
+	int initialize();
 
-	int exec(const std::string& sql);
+	int shutdown();
 
-	int errorCode();
+	int setThreadingMode(const ThreadingMode& threadingMode);
 
-	int extendedErrorCode();
-
-	std::string errorMessage();
+	int setLoggerCallback(const LoggerCallback& logger);
 
 protected:
 
-	static constexpr int DEFAULT_FLAGS = SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
+	void log(const int code, const std::string& message);
+
+	static void loggerCallback(void * object, int code, const char * message);
+
+	std::mutex m_loggerMutex;
 
 	Sqlite3Api::SharedPtr m_api = nullptr;
 
-	Sqlite3DatabasePtr m_object = nullptr;
+	LoggerCallback m_logger = nullptr;
 };
 
 } /* namespace sqleasy */
 } /* namespace puzzlehead */
 } /* namespace org */
 
-#endif /* ORG_PUZZLEHEAD_SQLEASY_DATABASE_HPP_ */
+#endif /* ORG_PUZZLEHEAD_SQLEASY_GLOBAL_CONFIG_HPP_ */

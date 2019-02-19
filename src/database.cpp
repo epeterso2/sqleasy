@@ -32,53 +32,29 @@ namespace sqleasy
 {
 
 Database::Database(const std::string& filename) :
-		Database(nullptr, filename, DEFAULT_FLAGS, DEFAULT_VFS)
+		Database(nullptr, filename, DEFAULT_FLAGS)
 {
 }
 
 Database::Database(const std::string& filename, const int flags) :
-		Database(nullptr, filename, flags, DEFAULT_VFS)
-{
-}
-
-Database::Database(const std::string& filename, const std::string& vfs) :
-		Database(nullptr, filename, DEFAULT_FLAGS, vfs)
-{
-}
-
-Database::Database(const std::string& filename, const int flags,
-		const std::string& vfs) :
-		Database(nullptr, filename, flags, vfs)
+		Database(nullptr, filename, flags)
 {
 }
 
 Database::Database(const Sqlite3Api::SharedPtr& api,
 		const std::string& filename) :
-		Database(api, filename, DEFAULT_FLAGS, DEFAULT_VFS)
+		Database(api, filename, DEFAULT_FLAGS)
 {
 }
 
 Database::Database(const Sqlite3Api::SharedPtr& api,
-		const std::string& filename, const int flags) :
-		Database(api, filename, flags, DEFAULT_VFS)
-{
-}
-
-Database::Database(const Sqlite3Api::SharedPtr& api,
-		const std::string& filename, const std::string& vfs) :
-		Database(api, filename, DEFAULT_FLAGS, vfs)
-{
-}
-
-Database::Database(const Sqlite3Api::SharedPtr& api,
-		const std::string& filename, const int flags, const std::string& vfs)
+		const std::string& filename, const int flags)
 {
 	m_api = ((api == nullptr) ? std::make_shared<Sqlite3Api>() : api);
 
 	sqlite3 * db = nullptr;
 
-	if (m_api->openV2(filename.c_str(), &db, flags,
-			vfs == "" ? nullptr : vfs.c_str()) == SQLITE_OK)
+	if (m_api->openV2(filename.c_str(), &db, flags, nullptr) == SQLITE_OK)
 	{
 		m_object.reset(db, [this](sqlite3 * db)
 		{
